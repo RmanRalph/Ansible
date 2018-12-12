@@ -1,0 +1,9 @@
+---
+- name: restart nginx
+  remote_user: vagrant
+  become: true
+  become_method: sudo
+  become_user: root
+  service:
+    name: nginx.service
+    state: restarted

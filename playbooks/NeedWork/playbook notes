@@ -1,0 +1,197 @@
+http://www.mydailytutorials.com/ansible-create-files/
+
+Creating an empty file in Ansible
+You can Create an empty file using the file module. You just need to set two parmaters.
+
+Path – This is the location where you want the file to be created. It can be either a relative path or an absolute path. You should also include the name of the file being created here.
+State – To create a new file this parameter should be set to ‘touch’. It works like the touch operation in Linux.
+In the following task, I am creating a new file called ‘devops_server’ in the location set against the ‘path’ parameter. I am giving the absolute path. Please see the default permissions and owner in the output.
+
+- hosts: all
+  tasks:
+  - name: Ansible create file if it doesn't exist example
+    file:
+      path: "/Users/mdtutorials2/Documents/Ansible/devops_server.txt"
+      state: touch
+
+output
+------
+-rw-r--r--  1 root       staff       0 Feb  5 12:00 devops_server.txt
+ 
+Creating a new file with content
+One way is to create an empty file using the above method and then using the blockinfile or lineinfile module to add content to it.
+
+But an easier method is to use the Ansible copy module to create a new file with content inside.
+
+The copy module is commonly used to copy a source file to a destination file. But there is a parameter ‘content’ which can be used to create a file with the content.
+
+Note: If the file already exists then the module would check for the contents of that file. And if the contents are same then nothing happens. But if the content is different then the file will be overwritten. So do not use this on an existing file unless necessary.
+
+The following task will create a new file ‘remote_server.txt’ if the file is not present.
+
+- hosts: all
+  tasks:
+  - name: Ansible create file with content example
+    copy:
+      dest: "/Users/mdtutorials2/Documents/Ansible/remote_server.txt"
+      content: |
+        dog1
+        tiger
+
+output
+------
+-rw-r--r--  1 root       wheel      11 Feb  6 08:37 remote_server.txt
+
+bash-3.2# cat remote_server.txt 
+dog1
+tiger
+Setting the permissions for a new file
+From the above examples, you can see the default permission if none are specified. You can specify the permission of the file being created in both cases. Whether using are the copy module or file module you can use the follow parameters to set the permission of the file.
+
+mode – you can set the mode of the file here. You can give it in 3 ways. In Octal notation like 0777(always put the zero at the beginning) or as a symbolic representation like. ‘u+rwx' or u=rw,g=r,o=r
+Owner – Give the name of the owner here.
+In the below exmaple, I am creating a new file ‘devops,txt’ with mode as 0777 and owner as mdtutorials2. As you can see in the output, all the permissions are set and the owner is given correctly.
+
+- hosts: all
+  tasks:
+  - name: Ansible create new file with permissions example.
+    file:
+      path: "/Users/mdtutorials2/Documents/Ansible/devops.txt"
+      state: touch
+      mode: 0777
+      owner: mdtutorials2
+output
+——-
+-rwxrwxrwx 1 mdtutorials2 staff 0 Feb 6 08:55 devops.txt
+
+Creating multiple new files
+You can aslso create multiple new files in a sinlge task instead of writing different tasks. You can also set different permissions and mode for each one also. The below 2 examples show both ways.
+
+You will be using the with_items module for giving the location of each file.
+
+- hosts: all
+  tasks:
+  - name: Ansible create multiple files example
+    file: 
+      path: "{{ item }}"
+      state: touch
+      mode: 0775
+    with_items:
+    - int1.txt
+    - int2.txt
+    - int3.txt
+    - int4.txt
+
+-rwxrwxr-x  1 root       staff       0 Feb  6 09:14 int1.txt
+-rwxrwxr-x  1 root       staff       0 Feb  6 09:14 int2.txt
+-rwxrwxr-x  1 root       staff       0 Feb  6 09:14 int3.txt
+-rwxrwxr-x  1 root       staff       0 Feb  6 09:14 int4.txt
+Now in the above case, you can see that all the permission and owners are the same. But what if you need multiple new files, but the attributes to be different.
+In such case, you can use with_items with dictionaries. And each dictionary will have all the attributes for each file.
+
+ 
+- hosts: all
+  tasks:
+  - name: Ansible create multiple files example
+    file: 
+      path: "{{ item.location }}"
+      state: touch
+      mode: "{{ item.mode }}"
+    with_items:
+    - { location: 'int5.txt',mode: '0566'}
+    - { location: 'int6.txt',mode: '0766'}
+
+-r-xrw-rw-  1 root       staff       0 Feb  6 09:24 int5.txt
+-rwxrw-rw-  1 root       staff       0 Feb  6 09:24 int6.txt
+Note: You can set the key in the dictionary to any string as long as you use the same string in the parameter list.
+
+----------------------------------------------
+
+
+https://www.data-essential.com/ansible-how-to-collect-information-about-remote-hosts-with-gathers-facts/
+Anisble – how to collect information about your remote hosts
+In order to do so, we will discuss about ansible modue: Gathers facts
+
+:information_source: Official webpage: https://docs.ansible.com/ansible/setup_module.html
+Display facts from all hosts and store them at /tmp/facts indexed by hostname
+ansible all -m setup --tree /tmp/facts
+➡ now check the file to have a clear view off all variables (facts) collected by ansible for your host like the well known {{ inventory_hostname }}
+
+
+To list the fact directly in your playbook you have to set gather_facts: True in your playbook
+  gather_facts: True
+
+  tasks:
+    - debug: var=hostvars[inventory_hostname]['ansible_enp0s3']['ipv4']['address']
+get current target host’s IP address and use it in your ansible role or playbook
+You can use in your template.j2{{ ansible_eth0.ipv4.address }} the same way you use {{inventory_hostname}}
+
+To set the value in your vars file
+---
+host_ip: "{{ ansible_enp0s3.ipv4.address }}"
+use case
+➡ here is an example: https://github.com/orsius/ansible-dtx-cassandra-3
+
+I Hope it’ll help someone one day ッ
+
+kr,
+G.
+
+ 
+
+update: 2018-04-19
+You can also use “setup” in your .yaml file.
+
+e.g. In my current usecase, I need to get the default ipv4 addr:
+
+- name: Gather facts from new server
+  setup:
+    filter: ansible_default_ipv4.address
+You can now call {{ ansible_default_ipv4.address }} in your playbook.
+(setup load all the ansible_** variables)*
+
+
+------------------------------------------------------
+
+
+https://blog.ippon.tech/ansible-tips-and-tricks/
+
+ Use the same role for several operations.
+Technically, a role presents a single entry point, its tasks/main.yml. Because of this design, one might think it's difficult to have a role accomplish several actions (without using tags, cf below, or includes).
+
+And still, there is a way to write reusable roles easily, including different unrelated operations.
+
+Using a variable to decide which action to perform, you can have a small operation router inside your role:
+
+---
+# roles/service/vars/main.yml
+# by default, we ensure that service is present, configured and running.
+# allowed values: present, absent, install, configure, start, stop
+state: present
+---
+# roles/service/tasks/main.yml
+- include: "{{ state }}.yml"
+---
+# roles/service/tasks/present.yml
+- include: "install.yml"
+- include: "configure.yml"
+- include: "start.yml"
+---
+# roles/service/tasks/install.yml
+- name: add user testuser1
+  user:
+	name: testuser1
+	state: present
+	groups: wheel
+Allow a role to fulfill several tasks.
+
+
+
+
+
+
+
+
+
+
+

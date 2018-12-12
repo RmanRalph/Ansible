@@ -1,0 +1,49 @@
+---
+- hosts: web2.lab
+  remote_user: vagrant
+  become: true
+  become_method: sudo
+  become_user: root
+
+  tasks:
+
+    - name: Check to make sure we have a 'wheel' group
+      group:
+        name: wheel
+        state: present
+
+    - name: Install the 'sudo' package
+      yum:
+        name: sudo
+        state: latest
+
+    - name: Create a login user
+      user:
+       name: somename
+       password:  '$6$F4NWXRFtSdCi8$DsB5vvMJYusQhSbvGXrYDXL6Xj37MUuqFCd4dGXdKd6NyxT3lpdELN07/Kpo7EjjWnm9zusFg/LLFv6oc.ynu/'
+       groups: 
+        - wheel
+       state: present
+       shell: /bin/bash       
+       system: no            
+       createhome: yes       
+
+    - name: Restrict root SSH logins
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        state: present
+        regexp: '^#PermitRootLogin'
+        line: 'PermitRootLogin no'
+
+    - name: Restrict SSH logins to keys only
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        state: present
+        regexp: '^#PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+
+    - name: Restart sshd
+      systemd:
+        state: restarted
+        daemon_reload: yes
+        name: sshd

@@ -1,0 +1,15 @@
+---
+- hosts: localhost
+  tasks:
+  - name: General packages are installed
+    remote_user: vagrant
+    become: true
+    become_method: sudo
+    become_user: root
+    yum:
+      name: "{{ packages }}"
+    vars:
+     packages:
+      - cowsay
+      - tree 
+

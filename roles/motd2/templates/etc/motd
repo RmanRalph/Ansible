@@ -1,0 +1,5 @@
+"Welcome to the {{ ansible_hostname }} LAB server"
+
+WARNING: You are logging onto a {{ company_name }} system. Access to this system, as well as the programs and data stored on it, is restricted to authorized users for approved purposes. Unauthorized access or use of the system and the data stored on it may lead to discipline up to and including termination of employment and other sanctions.  Activity on this system is logged and at times monitored by {{ company_name }} and by accessing this system, you agree and understand that your access and use will be logged and may be monitored.
+
+

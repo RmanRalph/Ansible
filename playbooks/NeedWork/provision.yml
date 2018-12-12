@@ -1,0 +1,13 @@
+roles
+  common/
+    tasks/
+      main.yml
+  ssh
+    tasks/
+      main.yml
+  packages
+    tasks/
+      main.yml
+  iptables
+    tasks/
+      main.yml

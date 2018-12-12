@@ -1,0 +1,26 @@
+---
+- name: ensure apache is at the latest version
+  remote_user: vagrant
+  become: true
+  become_method: sudo
+  become_user: root
+  yum:
+    name: nginx
+    state: latest
+- name: Upload default index.html for host
+  remote_user: vagrant
+  become: true
+  become_method: sudo
+  become_user: root
+  copy: src=index.html dest=/usr/share/nginx/html/ mode=0644
+  notify:
+  - restart nginx
+- name: ensure apache is running
+  remote_user: vagrant
+  become: true
+  become_method: sudo
+  become_user: root
+  service:
+    name: nginx
+    state: started
+

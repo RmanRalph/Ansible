@@ -1,0 +1,5 @@
+- hosts: all
+  vars:
+    motd_message: This is the new message I have configured
+  roles:
+    - ansible-motd

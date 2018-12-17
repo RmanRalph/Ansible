@@ -1,5 +1,5 @@
 ---
-- name: ensure apache is at the latest version
+- name: ensure nginx is at the latest version
   remote_user: vagrant
   become: true
   become_method: sudo

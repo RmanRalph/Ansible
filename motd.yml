@@ -1,4 +1,4 @@
-- hosts: web1.lab
+#- hosts: web1.lab
   vars:
     motd_message: This is the new message I have configured for test hosts
   roles:

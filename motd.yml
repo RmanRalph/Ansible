@@ -1,5 +1,5 @@
-- hosts: web2.lab
+- hosts: web2.lab, app2.lab
   vars:
-    motd_message: This is the new message I have configured for test hosts
+    motd_message: This is the new message I have configured for test hosts x 2
   roles:
     - ansible-motd

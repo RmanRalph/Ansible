@@ -1,4 +1,4 @@
 ---
-- hosts: webservers
+- hosts: web1.lab, web2.lab, web3.lab
   roles:
     - role: nginx2

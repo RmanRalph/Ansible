@@ -1,5 +1,5 @@
-- hosts: all
+- hosts: web2.lab, app2.lab
   vars:
-    motd_message: This is the new message I have configured
+    motd_message: This is the configured message in the MOTD2.yml file 22222
   roles:
     - motd2
